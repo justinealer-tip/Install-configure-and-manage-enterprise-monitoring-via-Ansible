@@ -1,0 +1,98 @@
+---
+ - hosts: all
+   become: true
+   tasks:
+
+   - name: install packages (Ubuntu)
+     tags: always
+     apt: name= state=latest update_cache=yes
+     with_items:
+       - apt-transport-https
+       - openssl
+       - default-jdk
+     when: ansible_distribution == "Ubuntu"
+
+   - name: elastic key
+     apt_key:
+       url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+       state: present
+
+   - name: elastic key repo
+     apt_repository:
+       repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+       state: present
+       filename: elastic-7.x.list
+       update_cache: yes
+
+   - name: install elasticsearch
+     apt:
+       name: elasticsearch
+       state: present
+       update_cache: yes
+
+   - name: reload systemd config
+     systemd: daemon_reload=yes
+
+   - name: Install logstash
+     apt:
+       name: install logstash
+       state: present
+
+   - name: install kibana
+     apt:
+       update_cache: yes
+       name: kibana
+       state: present
+
+   - name: install grafana
+     apt:
+       name: grafana
+       state: present
+
+   - name: grafana packages
+     apt_key:
+       url: https://packages.grafana.com/gpg.key
+       state:present
+   
+   - name: install prometheus
+     apt:
+      name:
+        - prometheus
+        - prometheus-node-exporter
+
+   - name: install nagios
+     apt:
+      name:
+        - apache2
+        - build-essential
+        - daemon
+        - libapache2-mod-php
+        - libgd-dev
+        - libperl-dev
+        - libssl-dev
+        - make
+        - openssl
+        - perl
+        - php
+        - php-gd
+        - unzip
+        - wget
+      state: latest
+      update_cache: yes
+        
+
+
+
+        
+
+
+   
+
+
+
+
+
+
+
+
+
